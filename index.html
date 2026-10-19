@@ -55,7 +55,7 @@
     <div class="card">
         <h2>🔊 音量コントロール</h2>
 
-        <!-- 接続先URLをここに直接埋め込んでいます -->
+        <!-- 接続先URLを固定で埋め込み -->
         <input type="hidden" id="serverUrl" value="https://bride-dreamboat-grid.ngrok-free.dev">
 
         <input type="range" id="volumeRange" min="0" max="100" value="50" oninput="document.getElementById('volVal').innerText = this.value">
@@ -80,7 +80,7 @@
                 const res = await fetch(`${baseUrl}/api/volume`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ volume: volume }) // ←ここが { volume: volume } になっているか確認
+                    body: JSON.stringify({ volume: volume })
                 });
                 const data = await res.json();
                 if (res.ok) {
