@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Bot 音量コントロール</title>
+    <style>
+        body {
+            background-color: #1e1e2e;
+            color: #cdd6f4;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background-color: #313244;
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            width: 320px;
+        }
+        h2 { margin-bottom: 20px; font-size: 22px; }
+        input[type=range] {
+            width: 100%;
+            margin: 20px 0 10px 0;
+            accent-color: #89b4fa;
+        }
+        .vol-display {
+            font-size: 28px;
+            font-weight: bold;
+            color: #89b4fa;
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #89b4fa;
+            color: #11111b;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
+        button:hover { background-color: #b4befe; }
+        #status { margin-top: 15px; font-size: 14px; min-height: 20px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>🔊 音量コントロール</h2>
+
+        <!-- 接続先URLをここに直接埋め込んでいます -->
+        <input type="hidden" id="serverUrl" value="https://bride-dreamboat-grid.ngrok-free.dev">
+
+        <input type="range" id="volumeRange" min="0" max="100" value="50" oninput="document.getElementById('volVal').innerText = this.value">
+        <div class="vol-display"><span id="volVal">50</span>%</div>
+
+        <button onclick="sendVolume()">決定</button>
+        <div id="status"></div>
+    </div>
+
+    <script>
+        async function sendVolume() {
+            let baseUrl = document.getElementById('serverUrl').value.trim();
+            const volume = parseInt(document.getElementById('volumeRange').value);
+            const status = document.getElementById('status');
+
+            baseUrl = baseUrl.replace(/\/$/, "");
+
+            status.style.color = '#f9e2af';
+            status.innerText = '送信中...';
+
+            try {
+                const res = await fetch(`${baseUrl}/api/volume`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ volume: volume })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    status.style.color = '#a6e3a1';
+                    status.innerText = data.message;
+                } else {
+                    status.style.color = '#f38ba8';
+                    status.innerText = data.message || 'エラーが発生しました';
+                }
+            } catch (e) {
+                status.style.color = '#f38ba8';
+                status.innerText = 'Botへの通信に失敗しました';
+            }
+        }
+    </script>
+</body>
+</html>
