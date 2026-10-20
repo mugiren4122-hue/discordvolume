@@ -66,6 +66,22 @@
     </div>
 
     <script>
+        // ページを開いたときに現在の音量を自動取得する
+        window.onload = async () => {
+            let baseUrl = document.getElementById('serverUrl').value.trim();
+            baseUrl = baseUrl.replace(/\/$/, "");
+            try {
+                const res = await fetch(`${baseUrl}/api/volume`);
+                const data = await res.json();
+                if (res.ok && data.volume !== undefined) {
+                    document.getElementById('volumeRange').value = data.volume;
+                    document.getElementById('volVal').innerText = data.volume;
+                }
+            } catch (e) {
+                console.log("現在の音量の取得に失敗しました");
+            }
+        };
+
         async function sendVolume() {
             let baseUrl = document.getElementById('serverUrl').value.trim();
             const volume = parseInt(document.getElementById('volumeRange').value);
